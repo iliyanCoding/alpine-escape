@@ -9,11 +9,9 @@ class Player {
     this.speed = 4;
   }
 
-  update(moveLeft, moveRight, moveUp, moveDown) {
+  update(moveLeft, moveRight) {
     if (moveLeft) this.x -= this.speed;
     if (moveRight) this.x += this.speed;
-    if (moveUp) this.y -= this.speed;
-    if (moveDown) this.y += this.speed;
 
     if (this.x < 0) {
       this.x = 0;
@@ -26,7 +24,7 @@ class Player {
     if (this.y < 0) {
       this.y = 0;
     }
-    else if (this.y > 2 * GAME.CANVAS_HEIGHT / 3) { //Keeps the player from going too far down
+    else if (this.y > 2 * GAME.CANVAS_HEIGHT / 3) { //Keeps the player in the upper two thirds of the scrren
       this.y = 2 * GAME.CANVAS_HEIGHT / 3;
     }
   }

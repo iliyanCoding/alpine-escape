@@ -24,8 +24,12 @@ function init() {
 
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  player.update(moveLeft, moveRight, moveUp, moveDown);
-  cameraY += GAME.SCROLL_SPEED;
+  player.update(moveLeft, moveRight);
+
+  let scrollSpeed = GAME.SCROLL_SPEED;
+  if (moveDown) scrollSpeed = GAME.SCROLL_SPEED * 2;
+  else if (moveUp) scrollSpeed = GAME.SCROLL_SPEED * 0.5;
+  cameraY += scrollSpeed;
 
   ctx.fillStyle = "#87cefa";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
