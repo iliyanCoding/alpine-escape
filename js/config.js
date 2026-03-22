@@ -1,0 +1,9 @@
+const GAME = {
+  CANVAS_WIDTH: 512,
+  CANVAS_HEIGHT: 640,
+  TILE_SIZE: 16,
+  TILES_PER_ROW: 12,
+  SCROLL_SPEED: 2
+};
+
+export { GAME };
