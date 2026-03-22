@@ -2,8 +2,8 @@ import { GAME } from "./config.js";
 
 class Player {
   constructor() {
-    this.x = GAME.CANVAS_WIDTH / 2;
-    this.y = GAME.CANVAS_HEIGHT / 2;
+    this.x = GAME.CANVAS_WIDTH / 2 - 16;
+    this.y = GAME.CANVAS_HEIGHT / 9;
     this.width = 32;
     this.height = 32;
     this.speed = 4;
@@ -26,8 +26,8 @@ class Player {
     if (this.y < 0) {
       this.y = 0;
     }
-    else if (this.y + this.height > GAME.CANVAS_HEIGHT) {
-      this.y = GAME.CANVAS_HEIGHT - this.height;
+    else if (this.y > 2 * GAME.CANVAS_HEIGHT / 3) { //Keeps the player from going too far down
+      this.y = 2 * GAME.CANVAS_HEIGHT / 3;
     }
   }
 

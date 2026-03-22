@@ -4,6 +4,7 @@ import { Player } from './player.js';
 const canvas = document.getElementById("root");
 /** @type {CanvasRenderingContext2D} */
 const ctx = canvas.getContext("2d")
+let cameraY = 0;
 const player = new Player();
 
 let moveLeft = false;
@@ -23,10 +24,18 @@ function init() {
 
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  player.update(moveLeft, moveRight, moveUp, moveDown);
+  cameraY += GAME.SCROLL_SPEED;
+
   ctx.fillStyle = "#87cefa";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  player.update(moveLeft, moveRight, moveUp, moveDown);
   player.draw(ctx);
+
+  // temp: test rectangles to verify scrolling
+  ctx.fillStyle = "green";
+  ctx.fillRect(200, 300 - cameraY, 32, 32);
+  ctx.fillRect(100, 600 - cameraY, 32, 32);
+
   requestAnimationFrame(gameLoop);
 }
 
