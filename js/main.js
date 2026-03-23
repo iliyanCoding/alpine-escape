@@ -1,6 +1,7 @@
 import { GAME } from './config.js';
 import { Player } from './player.js';
 import { Terrain } from './terrain.js';
+import { Obstacles } from './obstacles.js';
 import { loadAssets } from './assets.js';
 
 const canvas = document.getElementById("root");
@@ -9,6 +10,7 @@ const ctx = canvas.getContext("2d")
 let cameraY = 0;
 const player = new Player();
 const terrain = new Terrain();
+const obstacles = new Obstacles(terrain.image);
 
 let moveLeft = false;
 let moveRight = false;
@@ -37,7 +39,10 @@ function gameLoop() {
   cameraY += scrollSpeed;
 
   terrain.update(cameraY);
+  obstacles.spawn(terrain.rows, cameraY);
+  obstacles.update(cameraY);
   terrain.draw(ctx, cameraY);
+  obstacles.draw(ctx, cameraY);
   player.draw(ctx);
 
   requestAnimationFrame(gameLoop);

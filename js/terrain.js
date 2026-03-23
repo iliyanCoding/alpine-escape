@@ -43,7 +43,7 @@ class Terrain {
       else row.push(0);
     }
 
-    return { worldY: worldY, tiles: row };
+    return { worldY: worldY, tiles: row, trackLeft: trackLeft, trackRight: trackRight };
   }
 
   update(cameraY) {
