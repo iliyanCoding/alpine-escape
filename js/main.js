@@ -1,11 +1,14 @@
 import { GAME } from './config.js';
 import { Player } from './player.js';
+import { Terrain } from './terrain.js';
+import { loadAssets } from './assets.js';
 
 const canvas = document.getElementById("root");
 /** @type {CanvasRenderingContext2D} */
 const ctx = canvas.getContext("2d")
 let cameraY = 0;
 const player = new Player();
+const terrain = new Terrain();
 
 let moveLeft = false;
 let moveRight = false;
@@ -19,7 +22,9 @@ function init() {
   window.addEventListener("keydown", activate, false);
   window.addEventListener("keyup", deactivate, false);
 
-  gameLoop();
+  loadAssets([
+    { var: terrain.image, url: "assets/tilemap_packed.png" }
+  ], gameLoop);
 }
 
 function gameLoop() {
@@ -27,18 +32,13 @@ function gameLoop() {
   player.update(moveLeft, moveRight);
 
   let scrollSpeed = GAME.SCROLL_SPEED;
-  if (moveDown) scrollSpeed = GAME.SCROLL_SPEED * 2;
-  else if (moveUp) scrollSpeed = GAME.SCROLL_SPEED * 0.5;
+  if (moveDown) scrollSpeed = GAME.SCROLL_SPEED * 3;
+  else if (moveUp) scrollSpeed = GAME.SCROLL_SPEED * 0.7;
   cameraY += scrollSpeed;
 
-  ctx.fillStyle = "#87cefa";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  terrain.update(cameraY);
+  terrain.draw(ctx, cameraY);
   player.draw(ctx);
-
-  // temp: test rectangles to verify scrolling
-  ctx.fillStyle = "green";
-  ctx.fillRect(200, 300 - cameraY, 32, 32);
-  ctx.fillRect(100, 600 - cameraY, 32, 32);
 
   requestAnimationFrame(gameLoop);
 }
