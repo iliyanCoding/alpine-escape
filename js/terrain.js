@@ -5,15 +5,28 @@ class Terrain {
     this.image = new Image();
     this.rows = [];
     this.tilesPerRow = GAME.CANVAS_WIDTH / GAME.TILE_SIZE;
+    this.trackWidth = Math.floor(this.tilesPerRow / 3);
+    this.trackCenter = Math.floor(this.tilesPerRow / 2);
+    this.prevTrackCenter = this.trackCenter;
     this.nextWorldY = 0;
   }
 
   generateRow(worldY) {
     const row = [];
-    const trackWidth = Math.floor(this.tilesPerRow / 3);
-    const trackLeft = Math.floor((this.tilesPerRow - trackWidth) / 2);
-    const trackRight = trackLeft + trackWidth - 1;
 
+    // randomly shift track left, right, or straight
+    this.prevTrackCenter = this.trackCenter;
+    const rand = Math.random();
+    if (rand < 0.35) this.trackCenter -= 1;
+    else if (rand > 0.65) this.trackCenter += 1;
+
+    // clamp so track stays on screen
+    const halfTrack = Math.floor(this.trackWidth / 2);
+    if (this.trackCenter - halfTrack < 1) this.trackCenter = halfTrack + 1;
+    if (this.trackCenter + halfTrack > this.tilesPerRow - 2) this.trackCenter = this.tilesPerRow - 2 - halfTrack;
+
+    const trackLeft = this.trackCenter - halfTrack;
+    const trackRight = this.trackCenter + halfTrack;
     for (let col = 0; col < this.tilesPerRow; col++) {
       if (col === trackLeft) row.push(1);
       else if (col === trackRight) row.push(4);
