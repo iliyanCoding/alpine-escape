@@ -1,17 +1,25 @@
 import { GAME } from "./config.js";
 
 class Player {
-  constructor() {
+  constructor(image) {
+    this.image = image;
     this.x = GAME.CANVAS_WIDTH / 2 - 16;
     this.y = GAME.CANVAS_HEIGHT / 9;
-    this.width = 32;
-    this.height = 32;
-    this.speed = 4;
+    this.width = GAME.TILE_SIZE;
+    this.height = GAME.TILE_SIZE;
+    this.speed = 0.25;
+    this.xVelocity = 0;
+    this.friction = 0.97;
+    this.frame = 70;
+    this.animTimer = 0;
+    this.animSpeed = 20;
   }
 
   update(moveLeft, moveRight) {
-    if (moveLeft) this.x -= this.speed;
-    if (moveRight) this.x += this.speed;
+    if (moveLeft) this.xVelocity -= this.speed;
+    if (moveRight) this.xVelocity += this.speed;
+    this.xVelocity *= this.friction;
+    this.x += this.xVelocity;
 
     if (this.x < 0) {
       this.x = 0;
@@ -30,8 +38,19 @@ class Player {
   }
 
   draw(ctx) {
-    ctx.fillStyle = "red";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.animTimer++;
+    if (this.animTimer >= this.animSpeed) {
+      this.frame = this.frame === 70 ? 71 : 70;
+      this.animTimer = 0;
+    }
+
+    const srcX = (this.frame % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
+    const srcY = Math.floor(this.frame / GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
+    ctx.drawImage(
+      this.image,
+      srcX, srcY, GAME.TILE_SIZE, GAME.TILE_SIZE,
+      this.x, this.y, this.width, this.height
+    );
   }
 }
 

@@ -8,8 +8,8 @@ const canvas = document.getElementById("root");
 /** @type {CanvasRenderingContext2D} */
 const ctx = canvas.getContext("2d")
 let cameraY = 0;
-const player = new Player();
 const terrain = new Terrain();
+const player = new Player(terrain.image);
 const obstacles = new Obstacles(terrain.image);
 
 let moveLeft = false;
@@ -41,7 +41,7 @@ function gameLoop() {
   terrain.update(cameraY);
   obstacles.spawn(terrain.rows, cameraY);
   obstacles.update(cameraY);
-  terrain.draw(ctx, cameraY);
+  terrain.draw(ctx);
   obstacles.draw(ctx, cameraY);
   player.draw(ctx);
 
