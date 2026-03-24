@@ -5,7 +5,7 @@ class Terrain {
     this.image = new Image();
     this.rows = [];
     this.tilesPerRow = GAME.CANVAS_WIDTH / GAME.TILE_SIZE;
-    this.trackWidth = Math.floor(this.tilesPerRow / 2);
+    this.trackWidth = Math.floor(this.tilesPerRow * 0.4);
     this.trackCenter = Math.floor(this.tilesPerRow / 2);
 
     this.shiftDirection = 0;
@@ -20,19 +20,20 @@ class Terrain {
 
     if (this.shiftCounter <= 0) {
       const rand = Math.random();
-      if (rand < 0.3) this.shiftDirection = -1;
-      else if (rand > 0.7) this.shiftDirection = 1;
+      if (rand < 0.4) this.shiftDirection = -1;
+      else if (rand > 0.6) this.shiftDirection = 1;
       else this.shiftDirection = 0;
-      this.shiftCounter = 3 + Math.floor(Math.random() * 4); // 3 to 6 rows
+      this.shiftCounter = 5 + Math.floor(Math.random() * 4); // 5 to 8 rows
 
     }
-    this.trackCenter += this.shiftDirection;
+    if (Math.random() < 0.5) this.trackCenter += this.shiftDirection;
     this.shiftCounter--;
 
     // clamp so track stays on screen
     const halfTrack = Math.floor(this.trackWidth / 2);
-    if (this.trackCenter - halfTrack < 1) this.trackCenter = halfTrack + 1;
-    if (this.trackCenter + halfTrack > this.tilesPerRow - 2) this.trackCenter = this.tilesPerRow - 2 - halfTrack;
+    const margin = 4;
+    if (this.trackCenter - halfTrack < margin) this.trackCenter = halfTrack + margin;
+    if (this.trackCenter + halfTrack > this.tilesPerRow - margin) this.trackCenter = this.tilesPerRow - margin - halfTrack;
 
     const trackLeft = this.trackCenter - halfTrack;
     const trackRight = this.trackCenter + halfTrack;
