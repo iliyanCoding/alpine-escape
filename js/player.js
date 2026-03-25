@@ -34,6 +34,19 @@ class Player {
     this.lean = 0;
   }
 
+  reset() {
+    this.x = GAME.CANVAS_WIDTH / 2 - 16;
+    this.y = GAME.CANVAS_HEIGHT / 9;
+    this.xVelocity = 0;
+    this.hp = 3;
+    this.hitCooldown = 0;
+    this.holdTimer = 0;
+    this.particles = [];
+    this.shakeTimer = 0;
+    this.lean = 0;
+    this.prevDirection = 0;
+  }
+
   update(moveLeft, moveRight, scrollSpeed) {
     // count down cooldowns each frame
     if (this.hitCooldown > 0) this.hitCooldown--;

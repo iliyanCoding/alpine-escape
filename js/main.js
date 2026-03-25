@@ -16,11 +16,33 @@ const obstacles = new Obstacles(terrain.image);
 
 const hud = new HUD();
 let score = 0;
-let gameOver = false;
+let state = "title";
 let moveLeft = false;
 let moveRight = false;
 let moveUp = false;
 let moveDown = false;
+
+function restart() {
+  cameraY = 0;
+  score = 0;
+  hud.scoreTimer = 0;
+  player.reset();
+  terrain.rows = [];
+  terrain.nextWorldY = 0;
+  terrain.trackCenter = Math.floor(terrain.tilesPerRow / 2);
+  terrain.shiftDirection = 0;
+  terrain.shiftCounter = 0;
+  terrain.prevTrackLeft = -1;
+  terrain.prevTrackRight = -1;
+  terrain.curveCount = 0;
+  terrain.lastCurveDir = 0;
+  obstacles.obstacles = [];
+  obstacles.lastSpawnY = -1;
+  moveLeft = false;
+  moveRight = false;
+  moveUp = false;
+  moveDown = false;
+}
 
 function init() {
   canvas.width = GAME.CANVAS_WIDTH;
@@ -35,9 +57,39 @@ function init() {
 }
 
 function gameLoop() {
-  if (gameOver) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  if (state === "title") {
+    drawTitle();
+  } else if (state === "playing") {
+    updatePlaying();
+  } else if (state === "gameover") {
+    drawGameOver();
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+function drawTitle() {
+  ctx.fillStyle = "#1a1a2e";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.font = "32px monospace";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText("Alpine Escape", canvas.width / 2, canvas.height / 3);
+
+  ctx.font = "16px monospace";
+  ctx.fillText("Press ENTER to Start", canvas.width / 2, canvas.height / 2);
+
+  ctx.font = "12px monospace";
+  ctx.fillStyle = "#aaa";
+  ctx.fillText("Arrow keys to move", canvas.width / 2, canvas.height / 2 + 40);
+  ctx.fillText("UP to slow down, DOWN to speed up", canvas.width / 2, canvas.height / 2 + 60);
+  ctx.textAlign = "left";
+}
+
+function updatePlaying() {
   let scrollSpeed = GAME.SCROLL_SPEED;
   if (moveDown) scrollSpeed = GAME.SCROLL_SPEED * 3;
   else if (moveUp) scrollSpeed = GAME.SCROLL_SPEED * 0.7;
@@ -62,10 +114,12 @@ function gameLoop() {
     if (screenY > player.y + player.height || screenY + obs.height < player.y) continue;
     if (player.hitCooldown <= 0 && collides(player, { x: obs.x, y: screenY, width: obs.width, height: obs.height })) {
       player.hp -= 1;
-      player.hitCooldown = 120; // ~2 seconds at 60fps
-      player.hit(); // trigger screen shake
-      console.log("Hit! HP: " + player.hp);
-      if (player.hp <= 0) gameOver = true;
+      player.hitCooldown = 120;
+      player.hit();
+      if (player.hp <= 0) {
+        state = "gameover";
+        return;
+      }
     }
   }
 
@@ -75,11 +129,38 @@ function gameLoop() {
   obstacles.draw(ctx, cameraY);
   player.draw(ctx);
   hud.draw(ctx, terrain.image, score, player.hp);
+}
 
-  requestAnimationFrame(gameLoop);
+function drawGameOver() {
+  ctx.fillStyle = "#1a1a2e";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.font = "32px monospace";
+  ctx.fillStyle = "#ff4444";
+  ctx.textAlign = "center";
+  ctx.fillText("Game Over", canvas.width / 2, canvas.height / 3);
+
+  ctx.font = "20px monospace";
+  ctx.fillStyle = "white";
+  ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2);
+
+  ctx.font = "16px monospace";
+  ctx.fillText("Press ENTER to Restart", canvas.width / 2, canvas.height / 2 + 50);
+  ctx.textAlign = "left";
 }
 
 function activate(event) {
+  if (event.key === "Enter") {
+    if (state === "title") {
+      restart();
+      state = "playing";
+    } else if (state === "gameover") {
+      restart();
+      state = "title";
+    }
+    return;
+  }
+
   if (event.key === "ArrowLeft") moveLeft = true;
   else if (event.key === "ArrowRight") moveRight = true;
   else if (event.key === "ArrowUp") moveUp = true;
@@ -94,5 +175,3 @@ function deactivate(event) {
 }
 
 init();
-
-
