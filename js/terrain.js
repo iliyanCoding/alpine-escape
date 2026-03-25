@@ -11,6 +11,12 @@ class Terrain {
     this.shiftDirection = 0;
     this.shiftCounter = 0;
     this.nextWorldY = 0;
+
+    // curve edge tracking
+    this.prevTrackLeft = -1;
+    this.prevTrackRight = -1;
+    this.curveCount = 0;
+    this.lastCurveDir = 0;
   }
 
   generateRow(worldY) {
@@ -37,9 +43,70 @@ class Terrain {
 
     const trackLeft = this.trackCenter - halfTrack;
     const trackRight = this.trackCenter + halfTrack;
+
+    // pick edge tiles based on whether the track shifted since last row
+    let leftTile = 1;
+    let rightTile = 4;
+
+    if (this.prevTrackLeft >= 0) {
+      const shifted = trackLeft - this.prevTrackLeft;
+      const prevRow = this.rows[this.rows.length - 1];
+
+      if (shifted < 0) {
+        // track shifted left
+        if (this.lastCurveDir !== -1) {
+          // first shift — put START tiles on the previous row (announcement)
+          this.curveCount = 1;
+          if (prevRow) {
+            prevRow.tiles[prevRow.trackLeft] = 14;
+            prevRow.tiles[prevRow.trackRight] = 29;
+          }
+        } else {
+          this.curveCount++;
+        }
+        this.lastCurveDir = -1;
+        // current shifted row gets MIDDLE tiles
+        leftTile = 25; rightTile = 40;
+
+      } else if (shifted > 0) {
+        // track shifted right
+        if (this.lastCurveDir !== 1) {
+          // first shift — put START tiles on the previous row (announcement)
+          this.curveCount = 1;
+          if (prevRow) {
+            prevRow.tiles[prevRow.trackLeft] = 24;
+            prevRow.tiles[prevRow.trackRight] = 15;
+          }
+        } else {
+          this.curveCount++;
+        }
+        this.lastCurveDir = 1;
+        // current shifted row gets MIDDLE tiles
+        leftTile = 37; rightTile = 28;
+
+      } else {
+        // no shift this row
+        if (this.lastCurveDir !== 0 && prevRow) {
+          // previous row was the last shifted — give it END tiles
+          if (this.lastCurveDir === -1) {
+            prevRow.tiles[prevRow.trackLeft] = 12;
+            prevRow.tiles[prevRow.trackRight] = 51;
+          } else {
+            prevRow.tiles[prevRow.trackLeft] = 50;
+            prevRow.tiles[prevRow.trackRight] = 17;
+          }
+        }
+        this.curveCount = 0;
+        this.lastCurveDir = 0;
+      }
+    }
+
+    this.prevTrackLeft = trackLeft;
+    this.prevTrackRight = trackRight;
+
     for (let col = 0; col < this.tilesPerRow; col++) {
-      if (col === trackLeft) row.push(1);
-      else if (col === trackRight) row.push(4);
+      if (col === trackLeft) row.push(leftTile);
+      else if (col === trackRight) row.push(rightTile);
       else if (col > trackLeft && col < trackRight) row.push(2);
       else row.push(0);
     }
