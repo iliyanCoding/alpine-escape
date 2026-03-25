@@ -39,6 +39,9 @@ class Player {
     if (this.hitCooldown > 0) this.hitCooldown--;
     if (this.shakeTimer > 0) this.shakeTimer--;
 
+    // animate faster when going fast, slower when going slow
+    this.animSpeed = Math.floor(20 * (GAME.SCROLL_SPEED / scrollSpeed));
+
     // faster scroll speed = harder to steer
     const steerFactor = GAME.SCROLL_SPEED / scrollSpeed;
 
