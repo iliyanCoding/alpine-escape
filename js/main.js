@@ -4,6 +4,7 @@ import { Terrain } from './terrain.js';
 import { Obstacles } from './obstacles.js';
 import { loadAssets } from './assets.js';
 import { collides } from './collision.js';
+import { HUD } from './hud.js';
 
 const canvas = document.getElementById("root");
 /** @type {CanvasRenderingContext2D} */
@@ -13,6 +14,8 @@ const terrain = new Terrain();
 const player = new Player(terrain.image);
 const obstacles = new Obstacles(terrain.image);
 
+const hud = new HUD();
+let score = 0;
 let gameOver = false;
 let moveLeft = false;
 let moveRight = false;
@@ -66,9 +69,12 @@ function gameLoop() {
     }
   }
 
+  score = hud.update(score, scrollSpeed);
+
   terrain.draw(ctx, cameraY);
   obstacles.draw(ctx, cameraY);
   player.draw(ctx);
+  hud.draw(ctx, terrain.image, score, player.hp);
 
   requestAnimationFrame(gameLoop);
 }
