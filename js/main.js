@@ -5,6 +5,7 @@ import { Obstacles } from './obstacles.js';
 import { loadAssets } from './assets.js';
 import { collides } from './collision.js';
 import { HUD } from './hud.js';
+import { Turrets } from './enemies.js';
 
 const canvas = document.getElementById("root");
 /** @type {CanvasRenderingContext2D} */
@@ -13,6 +14,7 @@ let cameraY = 0;
 const terrain = new Terrain();
 const player = new Player(terrain.image);
 const obstacles = new Obstacles(terrain.image);
+const turrets = new Turrets(terrain.image);
 
 const hud = new HUD();
 let score = 0;
@@ -38,6 +40,9 @@ function restart() {
   terrain.lastCurveDir = 0;
   obstacles.obstacles = [];
   obstacles.lastSpawnY = -1;
+  turrets.turrets = [];
+  turrets.snowballs = [];
+  turrets.lastSpawnY = 1500;
   moveLeft = false;
   moveRight = false;
   moveUp = false;
@@ -107,8 +112,10 @@ function updatePlaying() {
   terrain.update(cameraY);
   obstacles.spawn(terrain.rows, cameraY);
   obstacles.update(cameraY);
+  turrets.spawn(terrain.rows, cameraY);
+  turrets.update(cameraY, player.x + player.width / 2, player.y + player.height / 2);
 
-  // check collisions (only for obstacles near the player's Y)
+  // check collisions with obstacles
   for (const obs of obstacles.obstacles) {
     const screenY = obs.worldY - cameraY;
     if (screenY > player.y + player.height || screenY + obs.height < player.y) continue;
@@ -123,10 +130,26 @@ function updatePlaying() {
     }
   }
 
+  // check collisions with snowballs
+  for (let i = turrets.snowballs.length - 1; i >= 0; i--) {
+    const s = turrets.snowballs[i];
+    if (player.hitCooldown <= 0 && collides(player, s)) {
+      player.hp -= 1;
+      player.hitCooldown = 120;
+      player.hit();
+      turrets.snowballs.splice(i, 1);
+      if (player.hp <= 0) {
+        state = "gameover";
+        return;
+      }
+    }
+  }
+
   score = hud.update(score, scrollSpeed);
 
   terrain.draw(ctx, cameraY);
   obstacles.draw(ctx, cameraY);
+  turrets.draw(ctx, cameraY);
   player.draw(ctx);
   hud.draw(ctx, terrain.image, score, player.hp);
 }
