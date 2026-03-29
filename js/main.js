@@ -133,7 +133,8 @@ function updatePlaying() {
   // check collisions with snowballs
   for (let i = turrets.snowballs.length - 1; i >= 0; i--) {
     const s = turrets.snowballs[i];
-    if (player.hitCooldown <= 0 && collides(player, s)) {
+    const screenS = { x: s.x, y: s.worldY - cameraY, width: s.width, height: s.height };
+    if (player.hitCooldown <= 0 && collides(player, screenS)) {
       player.hp -= 1;
       player.hitCooldown = 120;
       player.hit();

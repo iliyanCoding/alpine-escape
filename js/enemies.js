@@ -28,7 +28,6 @@ class Turrets {
 
       if (Math.random() > SPAWN_CHANCE) continue;
 
-      // place cart on a random snow column (avoid edges)
       const snowCols = [];
       for (let col = 2; col < row.tiles.length - 4; col++) {
         if (col <= row.trackLeft || col > row.trackRight) snowCols.push(col);
@@ -63,18 +62,24 @@ class Turrets {
         continue;
       }
 
-      const screenY = turret.worldY - cameraY + GAME.TILE_SIZE;
+      const turretWorldCenterY = turret.worldY + GAME.TILE_SIZE;
+      const screenY = turretWorldCenterY - cameraY;
       const turretCenterX = turret.x + GAME.TILE_SIZE * 1.5;
-      const dx = playerX - turretCenterX;
-      const dy = playerY - screenY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const screenDx = playerX - turretCenterX;
+      const screenDy = playerY - screenY;
+      const screenDist = Math.sqrt(screenDx * screenDx + screenDy * screenDy);
 
-      if (dist < FIRE_RANGE) {
+      if (screenDist < FIRE_RANGE) {
+        const playerWorldY = playerY + cameraY;
+        const leadOffset = GAME.SCROLL_SPEED * 50;
+        const dx = playerX - turretCenterX;
+        const dy = playerWorldY + leadOffset - turretWorldCenterY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
         const nx = dx / dist;
         const ny = dy / dist;
         this.snowballs.push({
           x: turretCenterX,
-          y: screenY,
+          worldY: turret.worldY + GAME.TILE_SIZE,
           dx: nx * SNOWBALL_SPEED,
           dy: ny * SNOWBALL_SPEED,
           width: GAME.TILE_SIZE,
@@ -87,11 +92,11 @@ class Turrets {
     // update snowballs and remove off-screen ones
     for (let i = this.snowballs.length - 1; i >= 0; i--) {
       this.snowballs[i].x += this.snowballs[i].dx;
-      this.snowballs[i].y += this.snowballs[i].dy;
+      this.snowballs[i].worldY += this.snowballs[i].dy;
 
-      const s = this.snowballs[i];
-      if (s.x < -GAME.TILE_SIZE || s.x > GAME.CANVAS_WIDTH + GAME.TILE_SIZE ||
-          s.y < -GAME.TILE_SIZE || s.y > GAME.CANVAS_HEIGHT + GAME.TILE_SIZE) {
+      const screenY = this.snowballs[i].worldY - cameraY;
+      if (this.snowballs[i].x < -GAME.TILE_SIZE || this.snowballs[i].x > GAME.CANVAS_WIDTH + GAME.TILE_SIZE ||
+        screenY < -GAME.TILE_SIZE || screenY > GAME.CANVAS_HEIGHT + GAME.TILE_SIZE) {
         this.snowballs.splice(i, 1);
       }
     }
@@ -135,10 +140,11 @@ class Turrets {
     const sbSrcX = (SNOWBALL_TILE % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
     const sbSrcY = Math.floor(SNOWBALL_TILE / GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
     for (const s of this.snowballs) {
+      const screenY = s.worldY - cameraY;
       ctx.drawImage(
         this.image,
         sbSrcX, sbSrcY, GAME.TILE_SIZE, GAME.TILE_SIZE,
-        s.x, s.y, GAME.TILE_SIZE, GAME.TILE_SIZE
+        s.x, screenY, GAME.TILE_SIZE, GAME.TILE_SIZE
       );
     }
   }
