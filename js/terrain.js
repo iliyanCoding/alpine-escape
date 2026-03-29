@@ -22,7 +22,7 @@ class Terrain {
   generateRow(worldY) {
     const row = [];
 
-    // pick a new direction when counter runs out
+    // randomly decide which way the track drifts
 
     if (this.shiftCounter <= 0) {
       const rand = Math.random();
@@ -35,7 +35,7 @@ class Terrain {
     if (Math.random() < 0.5) this.trackCenter += this.shiftDirection;
     this.shiftCounter--;
 
-    // clamp so track stays on screen
+    // dont let the track go off screen
     const halfTrack = Math.floor(this.trackWidth / 2);
     const margin = 4;
     if (this.trackCenter - halfTrack < margin) this.trackCenter = halfTrack + margin;
@@ -44,7 +44,7 @@ class Terrain {
     const trackLeft = this.trackCenter - halfTrack;
     const trackRight = this.trackCenter + halfTrack;
 
-    // pick edge tiles based on whether the track shifted since last row
+    // use different edge tiles depending on if the track is curving
     let leftTile = 1;
     let rightTile = 4;
 
@@ -53,9 +53,8 @@ class Terrain {
       const prevRow = this.rows[this.rows.length - 1];
 
       if (shifted < 0) {
-        // track shifted left
+        // curving left — start tiles go on the row before
         if (this.lastCurveDir !== -1) {
-          // first shift — put START tiles on the previous row (announcement)
           this.curveCount = 1;
           if (prevRow) {
             prevRow.tiles[prevRow.trackLeft] = 14;
@@ -65,13 +64,11 @@ class Terrain {
           this.curveCount++;
         }
         this.lastCurveDir = -1;
-        // current shifted row gets MIDDLE tiles
         leftTile = 25; rightTile = 40;
 
       } else if (shifted > 0) {
-        // track shifted right
+        // curving right
         if (this.lastCurveDir !== 1) {
-          // first shift — put START tiles on the previous row (announcement)
           this.curveCount = 1;
           if (prevRow) {
             prevRow.tiles[prevRow.trackLeft] = 24;
@@ -81,13 +78,11 @@ class Terrain {
           this.curveCount++;
         }
         this.lastCurveDir = 1;
-        // current shifted row gets MIDDLE tiles
         leftTile = 37; rightTile = 28;
 
       } else {
-        // no shift this row
+        // straight again — put end tiles on the last curved row
         if (this.lastCurveDir !== 0 && prevRow) {
-          // previous row was the last shifted — give it END tiles
           if (this.lastCurveDir === -1) {
             prevRow.tiles[prevRow.trackLeft] = 12;
             prevRow.tiles[prevRow.trackRight] = 51;

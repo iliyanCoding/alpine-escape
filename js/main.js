@@ -1,3 +1,4 @@
+// ES6 Modules: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
 import { GAME } from './config.js';
 import { Player } from './player.js';
 import { Terrain } from './terrain.js';
@@ -105,7 +106,7 @@ function updatePlaying() {
   else if (moveUp) scrollSpeed = GAME.SCROLL_SPEED * 0.7;
   cameraY += scrollSpeed;
 
-  // check if player is on track or snow for different friction
+  // figure out if player is on track or snow
   const playerCol = Math.floor((player.x + player.width / 2) / GAME.TILE_SIZE);
   if (terrain.rows.length > 0) {
     const nearestRow = terrain.rows[0];
@@ -122,7 +123,7 @@ function updatePlaying() {
   wolves.spawn(terrain.rows, cameraY);
   wolves.update(cameraY, player.x + player.width / 2, player.y + player.height / 2);
 
-  // check collisions with obstacles
+  // collisions — obstacles
   for (const obs of obstacles.obstacles) {
     const screenY = obs.worldY - cameraY;
     if (screenY > player.y + player.height || screenY + obs.height < player.y) continue;
@@ -137,7 +138,7 @@ function updatePlaying() {
     }
   }
 
-  // check collisions with snowballs
+  // collisions — snowballs
   for (let i = turrets.snowballs.length - 1; i >= 0; i--) {
     const s = turrets.snowballs[i];
     const screenS = { x: s.x, y: s.worldY - cameraY, width: s.width, height: s.height };
@@ -153,7 +154,7 @@ function updatePlaying() {
     }
   }
 
-  // check collisions with wolves
+  // collisions — wolves
   for (let i = wolves.wolves.length - 1; i >= 0; i--) {
     const w = wolves.wolves[i];
     const screenW = { x: w.x, y: w.worldY - cameraY, width: w.width, height: w.height };

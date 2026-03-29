@@ -49,12 +49,12 @@ class Wolves {
   }
 
   update(cameraY, playerX, playerY) {
-    // remove snowmen that scrolled past the top
+    // clean up off-screen snowmen
     this.snowmen = this.snowmen.filter(
       s => s.worldY >= cameraY - GAME.TILE_SIZE * 2
     );
 
-    // check if player is near any snowman
+    // trigger snowmen when player gets close
     for (const snowman of this.snowmen) {
       if (snowman.triggered) continue;
 
@@ -68,7 +68,7 @@ class Wolves {
       if (dist < TRIGGER_RANGE) {
         snowman.triggered = true;
 
-        // wolf appears but doesn't leap yet — wind-up phase
+        // spawn wolf, it waits a bit before jumping
         this.wolves.push({
           x: snowman.x,
           worldY: snowman.worldY,
@@ -91,7 +91,7 @@ class Wolves {
       if (!wolf.leaping) {
         wolf.windup--;
         if (wolf.windup <= 0) {
-          // aim at player's current position and leap
+          // done waiting, jump at the player now
           wolf.leaping = true;
           const cx = wolf.x + GAME.TILE_SIZE / 2;
           const playerWorldY = playerY + cameraY;
@@ -120,7 +120,7 @@ class Wolves {
   }
 
   draw(ctx, cameraY) {
-    // draw snowmen (only untriggered ones)
+    // snowmen (hide the ones that already popped)
     for (const snowman of this.snowmen) {
       if (snowman.triggered) continue;
       const screenY = snowman.worldY - cameraY;
@@ -140,7 +140,7 @@ class Wolves {
       if (isLeaping) {
         tile = WOLF_LEAP_TILE;
       } else {
-        // walk animation during wind-up or idle after landing
+        // walking in place or standing after missing
         tile = WOLF_WALK_TILES[Math.floor(wolf.frame / 8) % 2];
       }
       const srcX = (tile % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;

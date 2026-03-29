@@ -50,12 +50,12 @@ class Turrets {
   }
 
   update(cameraY, playerX, playerY) {
-    // remove turrets that scrolled past the top
+    // clean up off-screen turrets
     while (this.turrets.length > 0 && this.turrets[0].worldY < cameraY - GAME.TILE_SIZE * 3) {
       this.turrets.shift();
     }
 
-    // fire snowballs at player if in range
+    // shoot at player if close enough
     for (const turret of this.turrets) {
       if (turret.cooldown > 0) {
         turret.cooldown--;
@@ -70,6 +70,7 @@ class Turrets {
       const screenDist = Math.sqrt(screenDx * screenDx + screenDy * screenDy);
 
       if (screenDist < FIRE_RANGE) {
+        // aim slightly ahead of the player
         const playerWorldY = playerY + cameraY;
         const leadOffset = GAME.SCROLL_SPEED * 50;
         const dx = playerX - turretCenterX;
@@ -90,7 +91,7 @@ class Turrets {
       }
     }
 
-    // update snowballs and remove off-screen ones
+    // move snowballs, remove if off screen
     for (let i = this.snowballs.length - 1; i >= 0; i--) {
       this.snowballs[i].x += this.snowballs[i].dx;
       this.snowballs[i].worldY += this.snowballs[i].dy;
@@ -110,7 +111,7 @@ class Turrets {
       const screenY = turret.worldY - cameraY;
       const cartCol = Math.floor(turret.x / GAME.TILE_SIZE);
 
-      // draw wire across the top row of the cart
+      // wire goes across the whole row except where the cart is
       const wireSrcX = (WIRE_TILE % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
       const wireSrcY = Math.floor(WIRE_TILE / GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
       for (let col = 0; col < tilesPerRow; col++) {
@@ -122,7 +123,7 @@ class Turrets {
         );
       }
 
-      // draw 3x3 cart
+      // the cart itself
       for (let r = 0; r < 3; r++) {
         for (let c = 0; c < 3; c++) {
           const tileIndex = CART_TILES[r][c];

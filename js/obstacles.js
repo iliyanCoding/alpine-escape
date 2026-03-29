@@ -16,10 +16,10 @@ class Obstacles {
 
       this.lastSpawnY = row.worldY;
 
-      // only one obstacle per row
+      // skip most rows
       if (Math.random() > SPAWN_CHANCE) continue;
 
-      // collect snow columns
+      // only spawn on snow, not on the track
       const snowCols = [];
       for (let col = 0; col < row.tiles.length; col++) {
         if (col <= row.trackLeft || col > row.trackRight) snowCols.push(col);
@@ -40,7 +40,7 @@ class Obstacles {
   }
 
   update(cameraY) {
-    // remove obstacles that scrolled past the top
+    // clean up
     while (this.obstacles.length > 0 && this.obstacles[0].worldY < cameraY - GAME.TILE_SIZE) {
       this.obstacles.shift();
     }

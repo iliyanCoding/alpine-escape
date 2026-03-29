@@ -1,7 +1,7 @@
 import { GAME } from "./config.js";
 
 const HEART_TILE = 119;
-const DIGIT_START = 84; // tile 84 = "0", 85 = "1", ..., 93 = "9"
+const DIGIT_START = 84;
 
 class HUD {
   constructor() {
@@ -18,7 +18,7 @@ class HUD {
   }
 
   draw(ctx, image, score, hp) {
-    // draw HP as X tiles in top-left
+    // hearts top left
     for (let i = 0; i < hp; i++) {
       const srcX = (HEART_TILE % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
       const srcY = Math.floor(HEART_TILE / GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
@@ -29,7 +29,7 @@ class HUD {
       );
     }
 
-    // draw score in top-right using tileset digits
+    // score top right, one digit at a time from the tileset
     const digits = String(score);
     const startX = GAME.CANVAS_WIDTH - 8 - digits.length * GAME.TILE_SIZE;
     for (let i = 0; i < digits.length; i++) {
