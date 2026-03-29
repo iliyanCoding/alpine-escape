@@ -10,32 +10,33 @@
 - [x] Clamp player within canvas bounds
 
 ## Phase 2 — Scrolling
-- [ ] Add cameraY that increases each frame
-- [ ] Draw reference shapes at fixed worldY to verify scrolling
-- [ ] Player stays in upper third of screen
-- [ ] Remove entities that scroll past the top
+- [x] Add cameraY that increases each frame
+- [x] Draw reference shapes at fixed worldY to verify scrolling
+- [x] Player stays in upper third of screen
+- [x] Remove entities that scroll past the top
 
 ## Phase 3 — Tileset & Terrain
-- [ ] Load tilemap_packed.png
-- [ ] Render procedural snow terrain with tiles
-- [ ] Generate new rows below screen, remove old rows above
+- [x] Load tilemap_packed.png
+- [x] Render procedural snow terrain with tiles
+- [x] Generate new rows below screen, remove old rows above
+- [x] Corner tile transitions for smooth track curves
 
 ## Phase 4 — Obstacles
-- [ ] Spawn trees and rocks procedurally
-- [ ] Draw obstacles from tileset
-- [ ] Collision detection (player loses 1 HP)
+- [x] Spawn trees and rocks procedurally
+- [x] Draw obstacles from tileset
+- [x] Collision detection (player loses 1 HP)
 
 ## Phase 5 — HUD & Game States
-- [ ] Health display (hearts)
-- [ ] Score display
+- [x] Health display (hearts)
+- [x] Score display
 - [ ] Level indicator
-- [ ] Title screen, game over screen, level complete screen
-- [ ] Full game loop: title → playing → game over → restart
+- [x] Title screen, game over screen
+- [x] Full game loop: title → playing → game over → restart
 
 ## Phase 6 — Turret Enemies
-- [ ] Place turrets during terrain generation
-- [ ] Fire projectiles toward player
-- [ ] Projectile collision costs 1 HP
+- [x] Place turrets during terrain generation
+- [x] Fire projectiles toward player (with lead aiming)
+- [x] Projectile collision costs 1 HP
 
 ## Phase 7 — Wolf Enemies
 - [ ] Spawn at screen edges
@@ -50,23 +51,34 @@
 ## Phase 9 — Powerups
 - [ ] Shield (absorbs one hit)
 - [ ] Score multiplier (x2 for 8 seconds)
-- [ ] Coins (bonus points)
+- [ ] Coins/collectibles (bonus points on track)
 
-## Phase 10 — Level Progression
-- [ ] Define level data (length, speed, enemies, density)
-- [ ] Track distance, trigger level complete
-- [ ] Load next level with updated parameters
+## Phase 10 — Increasing Difficulty
+- [ ] Turrets fire faster over time
+- [ ] Obstacles spawn more densely
+- [ ] Scroll speed gradually increases the longer you survive
 
 ## Phase 11 — Sprites & Visual Polish
-- [ ] Replace rectangles with tileset sprites
-- [ ] Snow particle effect
-- [ ] Screen shake on collision
+- [x] Replace rectangles with tileset sprites
+- [x] Snow particle trail behind player
+- [x] Screen shake on collision
+- [x] Player animation speed scales with scroll speed
+- [x] Character leans during direction changes
+- [ ] High score saved to localStorage, shown on title screen
+- [ ] Combo system (near-misses give bonus points)
 
-## Phase 12 — Audio
+## Phase 12 — New Obstacles & Events
+- [ ] Snowdrifts that slow you down
+- [ ] Ice patches that reduce friction
+- [ ] Moving obstacles (animals crossing the track)
+- [ ] Speed boost ramps
+- [ ] Avalanche event (wall of snow chases you)
+
+## Phase 13 — Audio
 - [ ] Sound effects (collision, pickup, level complete, game over)
 - [ ] Optional background music
 
-## Phase 13 — Flask Integration
+## Phase 14 — Flask Integration
 - [ ] Flask app with routes
 - [ ] SQLite database for scores
 - [ ] POST score on game over

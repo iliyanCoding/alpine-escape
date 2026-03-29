@@ -6,6 +6,7 @@ import { loadAssets } from './assets.js';
 import { collides } from './collision.js';
 import { HUD } from './hud.js';
 import { Turrets } from './enemies.js';
+import { Wolves } from './wolves.js';
 
 const canvas = document.getElementById("root");
 /** @type {CanvasRenderingContext2D} */
@@ -15,6 +16,7 @@ const terrain = new Terrain();
 const player = new Player(terrain.image);
 const obstacles = new Obstacles(terrain.image);
 const turrets = new Turrets(terrain.image);
+const wolves = new Wolves(terrain.image);
 
 const hud = new HUD();
 let score = 0;
@@ -43,6 +45,9 @@ function restart() {
   turrets.turrets = [];
   turrets.snowballs = [];
   turrets.lastSpawnY = 1500;
+  wolves.snowmen = [];
+  wolves.wolves = [];
+  wolves.lastSpawnY = 2500;
   moveLeft = false;
   moveRight = false;
   moveUp = false;
@@ -114,6 +119,8 @@ function updatePlaying() {
   obstacles.update(cameraY);
   turrets.spawn(terrain.rows, cameraY);
   turrets.update(cameraY, player.x + player.width / 2, player.y + player.height / 2);
+  wolves.spawn(terrain.rows, cameraY);
+  wolves.update(cameraY, player.x + player.width / 2, player.y + player.height / 2);
 
   // check collisions with obstacles
   for (const obs of obstacles.obstacles) {
@@ -146,11 +153,28 @@ function updatePlaying() {
     }
   }
 
+  // check collisions with wolves
+  for (let i = wolves.wolves.length - 1; i >= 0; i--) {
+    const w = wolves.wolves[i];
+    const screenW = { x: w.x, y: w.worldY - cameraY, width: w.width, height: w.height };
+    if (player.hitCooldown <= 0 && collides(player, screenW)) {
+      player.hp -= 1;
+      player.hitCooldown = 120;
+      player.hit();
+      wolves.wolves.splice(i, 1);
+      if (player.hp <= 0) {
+        state = "gameover";
+        return;
+      }
+    }
+  }
+
   score = hud.update(score, scrollSpeed);
 
   terrain.draw(ctx, cameraY);
   obstacles.draw(ctx, cameraY);
   turrets.draw(ctx, cameraY);
+  wolves.draw(ctx, cameraY);
   player.draw(ctx);
   hud.draw(ctx, terrain.image, score, player.hp);
 }

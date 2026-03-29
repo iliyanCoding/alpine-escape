@@ -75,6 +75,7 @@ class Turrets {
         const dx = playerX - turretCenterX;
         const dy = playerWorldY + leadOffset - turretWorldCenterY;
         const dist = Math.sqrt(dx * dx + dy * dy);
+        // Projectile aiming with direction vectors: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2
         const nx = dx / dist;
         const ny = dy / dist;
         this.snowballs.push({
