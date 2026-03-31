@@ -15,7 +15,7 @@ class Wolves {
     this.image = image;
     this.snowmen = [];
     this.wolves = [];
-    this.lastSpawnY = 2500;
+    this.lastSpawnY = 800;
   }
 
   spawn(terrainRows, cameraY) {
@@ -23,7 +23,8 @@ class Wolves {
       if (row.worldY <= this.lastSpawnY) continue;
       this.lastSpawnY = row.worldY;
 
-      if (Math.random() > SPAWN_CHANCE) continue;
+      const chance = Math.min(SPAWN_CHANCE + cameraY / 60000, 0.15);
+      if (Math.random() > chance) continue;
 
       // place snowman on or near the track
       const trackCols = [];
@@ -32,8 +33,9 @@ class Wolves {
       }
       if (trackCols.length === 0) continue;
 
+      const spacing = Math.max(MIN_SPACING - cameraY / 60, 200);
       const tooClose = this.snowmen.some(
-        s => Math.abs(s.worldY - row.worldY) < MIN_SPACING
+        s => Math.abs(s.worldY - row.worldY) < spacing
       );
       if (tooClose) continue;
 

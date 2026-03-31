@@ -18,7 +18,7 @@ class Turrets {
     this.image = image;
     this.turrets = [];
     this.snowballs = [];
-    this.lastSpawnY = 1500; // no turrets in the first stretch
+    this.lastSpawnY = 500;
   }
 
   spawn(terrainRows, cameraY) {
@@ -26,7 +26,8 @@ class Turrets {
       if (row.worldY <= this.lastSpawnY) continue;
       this.lastSpawnY = row.worldY;
 
-      if (Math.random() > SPAWN_CHANCE) continue;
+      const chance = Math.min(SPAWN_CHANCE + cameraY / 80000, 0.12);
+      if (Math.random() > chance) continue;
 
       const snowCols = [];
       for (let col = 2; col < row.tiles.length - 4; col++) {
@@ -34,9 +35,10 @@ class Turrets {
       }
       if (snowCols.length === 0) continue;
 
-      // check spacing from existing turrets
+      // dont stack them too close
+      const spacing = Math.max(MIN_SPACING - cameraY / 50, 300);
       const tooClose = this.turrets.some(
-        t => Math.abs(t.worldY - row.worldY) < MIN_SPACING
+        t => Math.abs(t.worldY - row.worldY) < spacing
       );
       if (tooClose) continue;
 
@@ -87,7 +89,7 @@ class Turrets {
           width: GAME.TILE_SIZE,
           height: GAME.TILE_SIZE
         });
-        turret.cooldown = FIRE_COOLDOWN;
+        turret.cooldown = Math.max(FIRE_COOLDOWN - cameraY / 500, 25);
       }
     }
 

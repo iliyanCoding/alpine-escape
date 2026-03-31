@@ -45,10 +45,10 @@ function restart() {
   obstacles.lastSpawnY = -1;
   turrets.turrets = [];
   turrets.snowballs = [];
-  turrets.lastSpawnY = 1500;
+  turrets.lastSpawnY = 500;
   wolves.snowmen = [];
   wolves.wolves = [];
-  wolves.lastSpawnY = 2500;
+  wolves.lastSpawnY = 800;
   moveLeft = false;
   moveRight = false;
   moveUp = false;
@@ -101,9 +101,12 @@ function drawTitle() {
 }
 
 function updatePlaying() {
-  let scrollSpeed = GAME.SCROLL_SPEED;
-  if (moveDown) scrollSpeed = GAME.SCROLL_SPEED * 3;
-  else if (moveUp) scrollSpeed = GAME.SCROLL_SPEED * 0.7;
+  // game gets faster the further you go, caps at 2x
+  const difficulty = Math.min(1 + cameraY / 20000, 2);
+  let baseSpeed = GAME.SCROLL_SPEED * difficulty;
+  let scrollSpeed = baseSpeed;
+  if (moveDown) scrollSpeed = baseSpeed * 3;
+  else if (moveUp) scrollSpeed = baseSpeed * 0.7;
   cameraY += scrollSpeed;
 
   // figure out if player is on track or snow
