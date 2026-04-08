@@ -99,7 +99,9 @@ class Wolves {
           const playerWorldY = playerY + cameraY;
           const leadOffset = GAME.SCROLL_SPEED * 30;
           const wdx = playerX - cx;
-          const wdy = (playerWorldY + leadOffset) - wolf.worldY;
+          // done with AI: only lead the target when the player is below the wolf
+          const rawDy = playerWorldY - wolf.worldY;
+          const wdy = rawDy > 0 ? rawDy + leadOffset : rawDy;
           const wdist = Math.sqrt(wdx * wdx + wdy * wdy);
           wolf.dx = (wdx / wdist) * WOLF_SPEED;
           wolf.dy = (wdy / wdist) * WOLF_SPEED;

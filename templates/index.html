@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<article class="row justify-content-center mt-3">
+    <section class="col-auto">
+        <div id="canvas-wrapper">
+            <canvas id="root"></canvas>
+
+            <div id="gameover-overlay" class="hidden">
+                <h2 class="text-danger fw-bold fs-1">Game Over</h2>
+                <p class="fs-4">Your score: <span id="final-score" class="fw-bold">0</span></p>
+                <form id="score-form">
+                    <section class="mb-3">
+                        <label for="username-input" class="form-label">Save your score?</label>
+                        <input type="text" id="username-input" class="form-control" maxlength="16" placeholder="Enter name" autocomplete="off">
+                    </section>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="submit" id="save-btn" class="btn btn-primary">Save</button>
+                        <button type="button" id="skip-btn" class="btn btn-secondary">Skip</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="col-auto">
+        <div class="card bg-secondary bg-opacity-25 border-secondary" style="width: 250px;">
+            <div class="card-header text-center fw-bold fs-5">Top Scores</div>
+            <ol id="score-list" class="list-group list-group-flush list-group-numbered">
+            </ol>
+        </div>
+    </section>
+</article>
+
+<script src="/js/main.js" type="module"></script>
+{% endblock %}

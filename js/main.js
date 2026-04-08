@@ -26,6 +26,7 @@ let moveLeft = false;
 let moveRight = false;
 let moveUp = false;
 let moveDown = false;
+let overlayActive = false;
 
 function restart() {
   cameraY = 0;
@@ -65,6 +66,21 @@ function init() {
   loadAssets([
     { var: terrain.image, url: "assets/tilemap_packed.png" }
   ], gameLoop);
+
+  document.getElementById("score-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    let username = document.getElementById("username-input").value.trim();
+    if (!username) return;
+    saveScore(username);
+  });
+
+  document.getElementById("skip-btn").addEventListener("click", function () {
+    hideOverlay();
+    restart();
+    state = "title";
+  });
+
+  fetchLeaderboard();
 }
 
 function gameLoop() {
@@ -136,6 +152,7 @@ function updatePlaying() {
       player.hit();
       if (player.hp <= 0) {
         state = "gameover";
+        showOverlay();
         return;
       }
     }
@@ -152,6 +169,7 @@ function updatePlaying() {
       turrets.snowballs.splice(i, 1);
       if (player.hp <= 0) {
         state = "gameover";
+        showOverlay();
         return;
       }
     }
@@ -168,6 +186,7 @@ function updatePlaying() {
       wolves.wolves.splice(i, 1);
       if (player.hp <= 0) {
         state = "gameover";
+        showOverlay();
         return;
       }
     }
@@ -186,29 +205,68 @@ function updatePlaying() {
 function drawGameOver() {
   ctx.fillStyle = "#1a1a2e";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 
-  ctx.font = "32px monospace";
-  ctx.fillStyle = "#ff4444";
-  ctx.textAlign = "center";
-  ctx.fillText("Game Over", canvas.width / 2, canvas.height / 3);
+function showOverlay() {
+  overlayActive = true;
+  document.getElementById("final-score").textContent = score;
+  document.getElementById("username-input").value = "";
+  document.getElementById("gameover-overlay").classList.remove("hidden");
+  setTimeout(() => document.getElementById("username-input").focus(), 50);
+}
 
-  ctx.font = "20px monospace";
-  ctx.fillStyle = "white";
-  ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2);
+function hideOverlay() {
+  overlayActive = false;
+  document.getElementById("gameover-overlay").classList.add("hidden");
+}
 
-  ctx.font = "16px monospace";
-  ctx.fillText("Press ENTER to Restart", canvas.width / 2, canvas.height / 2 + 50);
-  ctx.textAlign = "left";
+// Leaderboard: XMLHttpRequest pattern from CS1116 coursework
+function fetchLeaderboard() {
+  let xhttp = new XMLHttpRequest();
+  xhttp.addEventListener("readystatechange", function () {
+    if (xhttp.readyState === 4 && xhttp.status === 200) {
+      let scores = JSON.parse(xhttp.responseText);
+      let list = document.getElementById("score-list");
+      list.innerHTML = "";
+      for (let i = 0; i < scores.length; i++) {
+        let li = document.createElement("li");
+        li.className = "list-group-item bg-transparent text-light";
+        li.textContent = scores[i].username + " — " + scores[i].score;
+        list.appendChild(li);
+      }
+    }
+  }, false);
+  xhttp.open("GET", "/api/scores", true);
+  xhttp.send();
+}
+
+function saveScore(username) {
+  let data = new FormData();
+  data.append("username", username);
+  data.append("score", score);
+
+  let xhttp = new XMLHttpRequest();
+  xhttp.addEventListener("readystatechange", function () {
+    if (xhttp.readyState === 4) {
+      if (xhttp.status === 200 && xhttp.responseText === "success") {
+        fetchLeaderboard();
+      }
+      hideOverlay();
+      restart();
+      state = "title";
+    }
+  }, false);
+  xhttp.open("POST", "/api/scores", true);
+  xhttp.send(data);
 }
 
 function activate(event) {
+  if (overlayActive) return;
+
   if (event.key === "Enter") {
     if (state === "title") {
       restart();
       state = "playing";
-    } else if (state === "gameover") {
-      restart();
-      state = "title";
     }
     return;
   }

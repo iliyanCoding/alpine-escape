@@ -8,10 +8,10 @@ const CART_TILES = [
 const WIRE_TILE = 46;
 const SNOWBALL_TILE = 95;
 const FIRE_RANGE = 350;
-const FIRE_COOLDOWN = 60;
-const SNOWBALL_SPEED = 4;
-const SPAWN_CHANCE = 0.05;
-const MIN_SPACING = 600;
+const FIRE_COOLDOWN = 80;
+const SNOWBALL_SPEED = 3.5;
+const SPAWN_CHANCE = 0.04;
+const MIN_SPACING = 700;
 
 class Turrets {
   constructor(image) {
@@ -26,7 +26,7 @@ class Turrets {
       if (row.worldY <= this.lastSpawnY) continue;
       this.lastSpawnY = row.worldY;
 
-      const chance = Math.min(SPAWN_CHANCE + cameraY / 80000, 0.12);
+      const chance = Math.min(SPAWN_CHANCE + cameraY / 120000, 0.09);
       if (Math.random() > chance) continue;
 
       const snowCols = [];
@@ -36,7 +36,7 @@ class Turrets {
       if (snowCols.length === 0) continue;
 
       // dont stack them too close
-      const spacing = Math.max(MIN_SPACING - cameraY / 50, 300);
+      const spacing = Math.max(MIN_SPACING - cameraY / 80, 400);
       const tooClose = this.turrets.some(
         t => Math.abs(t.worldY - row.worldY) < spacing
       );
@@ -74,7 +74,7 @@ class Turrets {
       if (screenDist < FIRE_RANGE) {
         // aim slightly ahead of the player
         const playerWorldY = playerY + cameraY;
-        const leadOffset = GAME.SCROLL_SPEED * 50;
+        const leadOffset = GAME.SCROLL_SPEED * 35;
         const dx = playerX - turretCenterX;
         const dy = playerWorldY + leadOffset - turretWorldCenterY;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -89,7 +89,7 @@ class Turrets {
           width: GAME.TILE_SIZE,
           height: GAME.TILE_SIZE
         });
-        turret.cooldown = Math.max(FIRE_COOLDOWN - cameraY / 500, 25);
+        turret.cooldown = Math.max(FIRE_COOLDOWN - cameraY / 800, 40);
       }
     }
 
