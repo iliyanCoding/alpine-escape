@@ -205,19 +205,28 @@ function updatePlaying() {
 function drawGameOver() {
   ctx.fillStyle = "#1a1a2e";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.font = "32px monospace";
+  ctx.fillStyle = "#ff4444";
+  ctx.textAlign = "center";
+  ctx.fillText("Game Over", canvas.width / 2, canvas.height / 3);
+
+  ctx.font = "20px monospace";
+  ctx.fillStyle = "white";
+  ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2);
+  ctx.textAlign = "left";
 }
 
 function showOverlay() {
   overlayActive = true;
-  document.getElementById("final-score").textContent = score;
   document.getElementById("username-input").value = "";
-  document.getElementById("gameover-overlay").classList.remove("hidden");
+  document.getElementById("score-panel").classList.remove("hidden");
   setTimeout(() => document.getElementById("username-input").focus(), 50);
 }
 
 function hideOverlay() {
   overlayActive = false;
-  document.getElementById("gameover-overlay").classList.add("hidden");
+  document.getElementById("score-panel").classList.add("hidden");
 }
 
 // Leaderboard: XMLHttpRequest pattern from CS1116 coursework

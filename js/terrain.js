@@ -122,7 +122,7 @@ class Terrain {
 
   draw(ctx, cameraY) {
     for (const row of this.rows) {
-      const screenY = row.worldY - cameraY;
+      const screenY = Math.round(row.worldY - cameraY);
 
       for (let col = 0; col < row.tiles.length; col++) {
         const tileIndex = row.tiles[col];
