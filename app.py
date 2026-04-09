@@ -1,12 +1,7 @@
 from flask import Flask, render_template, request
 from database import get_db, close_db
 
-app = Flask(
-    __name__,
-    static_folder=".",
-    static_url_path="",
-    template_folder="templates"
-)
+app = Flask(__name__)
 
 app.teardown_appcontext(close_db)
 
@@ -44,7 +39,3 @@ def post_score():
     )
     db.commit()
     return "success"
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

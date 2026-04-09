@@ -5,6 +5,15 @@
     <section class="col-auto">
         <canvas id="root"></canvas>
 
+    </section>
+
+    <section class="col-auto">
+        <div class="card bg-secondary bg-opacity-25 border-secondary" style="width: 250px;">
+            <div class="card-header text-center fw-bold fs-5">Top Scores</div>
+            <ol id="score-list" class="list-group list-group-flush list-group-numbered">
+            </ol>
+        </div>
+
         <div id="score-panel" class="hidden mt-3 text-center">
             <form id="score-form" class="d-flex gap-2 justify-content-center align-items-end">
                 <section>
@@ -16,15 +25,7 @@
             </form>
         </div>
     </section>
-
-    <section class="col-auto">
-        <div class="card bg-secondary bg-opacity-25 border-secondary" style="width: 250px;">
-            <div class="card-header text-center fw-bold fs-5">Top Scores</div>
-            <ol id="score-list" class="list-group list-group-flush list-group-numbered">
-            </ol>
-        </div>
-    </section>
 </article>
 
-<script src="/js/main.js" type="module"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}" type="module"></script>
 {% endblock %}
