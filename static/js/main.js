@@ -27,6 +27,7 @@ let moveRight = false;
 let moveUp = false;
 let moveDown = false;
 let overlayActive = false;
+let paused = false;
 
 function restart() {
   cameraY = 0;
@@ -54,6 +55,7 @@ function restart() {
   moveRight = false;
   moveUp = false;
   moveDown = false;
+  paused = false;
 }
 
 function init() {
@@ -89,7 +91,12 @@ function gameLoop() {
   if (state === "title") {
     drawTitle();
   } else if (state === "playing") {
-    updatePlaying();
+    if (paused) {
+      drawPlayingFrame();
+      drawPauseOverlay();
+    } else {
+      updatePlaying();
+    }
   } else if (state === "gameover") {
     drawGameOver();
   }
@@ -199,12 +206,31 @@ function updatePlaying() {
 
   score = hud.update(score, scrollSpeed);
 
+  drawPlayingFrame();
+}
+
+function drawPlayingFrame() {
   terrain.draw(ctx, cameraY);
   obstacles.draw(ctx, cameraY);
   turrets.draw(ctx, cameraY);
   wolves.draw(ctx, cameraY);
   player.draw(ctx);
   hud.draw(ctx, terrain.image, score, player.hp);
+}
+
+function drawPauseOverlay() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.textAlign = "center";
+  ctx.font = "32px monospace";
+  ctx.fillStyle = "white";
+  ctx.fillText("Paused", canvas.width / 2, canvas.height / 2 - 10);
+
+  ctx.font = "14px monospace";
+  ctx.fillStyle = "#aaa";
+  ctx.fillText("Press P to resume", canvas.width / 2, canvas.height / 2 + 20);
+  ctx.textAlign = "left";
 }
 
 function drawGameOver() {
@@ -289,6 +315,21 @@ function activate(event) {
     player.invincible = !player.invincible;
     return;
   }
+
+  if (event.key === "p" || event.key === "P") {
+    if (state === "playing") {
+      paused = !paused;
+      if (paused) {
+        moveLeft = false;
+        moveRight = false;
+        moveUp = false;
+        moveDown = false;
+      }
+    }
+    return;
+  }
+
+  if (paused) return;
 
   if (event.key === "ArrowLeft") moveLeft = true;
   else if (event.key === "ArrowRight") moveRight = true;

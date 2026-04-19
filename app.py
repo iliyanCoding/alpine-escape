@@ -7,8 +7,13 @@ app.teardown_appcontext(close_db)
 
 
 @app.route("/")
-def index():
-    return render_template("index.html")
+def home():
+    return render_template("home.html")
+
+
+@app.route("/play")
+def play():
+    return render_template("play.html")
 
 
 @app.route("/api/scores")

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<article class="row justify-content-center">
+    <section class="col-lg-8">
+        <header class="text-center mb-4">
+            <h1 class="display-4 fw-bold">Alpine Escape</h1>
+            <p class="lead text-secondary">Ski downhill, dodge the dangers, and rack up the highest score.</p>
+            <a href="{{ url_for('play') }}" class="btn btn-primary btn-lg mt-2">Start Playing</a>
+        </header>
+
+        <section class="card bg-secondary bg-opacity-25 border-secondary text-light mb-4">
+            <div class="card-body">
+                <h2 class="h4 fw-bold">How to Play</h2>
+                <p class="mb-2">You're racing down a snowy mountain. The longer you stay alive, the higher your score climbs — but the slope only gets more crowded and more dangerous the further you go.</p>
+                <ul class="mb-0">
+                    <li>Weave around the trees and tree stumps scattered down the piste.</li>
+                    <li>Don't trust the snowmen &mdash; every one of them is a wolf in disguise, waiting to pop out and leap at you as you pass.</li>
+                    <li>Watch out for lift cards &mdash; they'll pelt you with snowballs from the side of the track.</li>
+                    <li>Stay on the track &mdash; going off-piste slows you down.</li>
+                    <li>You can take two hits, but the third crash ends your run. Save your score at the end if it's a personal best.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="card bg-secondary bg-opacity-25 border-secondary text-light mb-4">
+            <div class="card-body">
+                <h2 class="h4 fw-bold">Controls</h2>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4"><kbd>&larr;</kbd> <kbd>&rarr;</kbd></dt>
+                    <dd class="col-sm-8">Steer left and right</dd>
+                    <dt class="col-sm-4"><kbd>&uarr;</kbd> <kbd>&darr;</kbd></dt>
+                    <dd class="col-sm-8">Adjust speed up / slow down</dd>
+                    <dt class="col-sm-4"><kbd>Enter</kbd></dt>
+                    <dd class="col-sm-8">Start a run from the title screen</dd>
+                    <dt class="col-sm-4"><kbd>P</kbd></dt>
+                    <dd class="col-sm-8">Pause and resume the game</dd>
+                </dl>
+            </div>
+        </section>
+
+        <section class="card bg-secondary bg-opacity-25 border-warning text-light mb-4">
+            <div class="card-body">
+                <h2 class="h4 fw-bold text-warning">Cheats</h2>
+                <p>Want to see how far the mountain can really go? There's a secret key that makes you untouchable.</p>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4"><kbd>I</kbd></dt>
+                    <dd class="col-sm-8 mb-0">Toggle <strong>invincibility</strong>. Trees, stumps, wolves, and snowballs can't hurt you, and your skier gains a golden glow while it's active. Press <kbd>I</kbd> again to turn it off.</dd>
+                </dl>
+            </div>
+        </section>
+    </section>
+</article>
+{% endblock %}
