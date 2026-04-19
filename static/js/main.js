@@ -133,7 +133,8 @@ function updatePlaying() {
   if (!player.onTrack) scrollSpeed *= 0.7;
   cameraY += scrollSpeed;
 
-  // figure out if player is on track or snow
+  // the player draws in screen space but terrain rows live in world space, so we add
+  // cameraY back on to figure out which row the skier is actually sitting on
   const playerCol = Math.floor((player.x + player.width / 2) / GAME.TILE_SIZE);
   const playerWorldY = player.y + cameraY;
   player.onTrack = false;
@@ -154,7 +155,6 @@ function updatePlaying() {
   wolves.spawn(terrain.rows, cameraY);
   wolves.update(cameraY, player.x + player.width / 2, player.y + player.height / 2);
 
-  // collisions — obstacles
   for (const obs of obstacles.obstacles) {
     const screenY = obs.worldY - cameraY;
     if (screenY > player.y + player.height || screenY + obs.height < player.y) continue;
@@ -170,7 +170,6 @@ function updatePlaying() {
     }
   }
 
-  // collisions — snowballs
   for (let i = turrets.snowballs.length - 1; i >= 0; i--) {
     const s = turrets.snowballs[i];
     const screenS = { x: s.x, y: s.worldY - cameraY, width: s.width, height: s.height };
@@ -187,7 +186,6 @@ function updatePlaying() {
     }
   }
 
-  // collisions — wolves
   for (let i = wolves.wolves.length - 1; i >= 0; i--) {
     const w = wolves.wolves[i];
     const screenW = { x: w.x, y: w.worldY - cameraY, width: w.width, height: w.height };

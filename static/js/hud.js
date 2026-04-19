@@ -18,7 +18,6 @@ class HUD {
   }
 
   draw(ctx, image, score, hp) {
-    // hearts top left
     for (let i = 0; i < hp; i++) {
       const srcX = (HEART_TILE % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
       const srcY = Math.floor(HEART_TILE / GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
@@ -29,7 +28,6 @@ class HUD {
       );
     }
 
-    // score top right, one digit at a time from the tileset
     const digits = String(score);
     const startX = GAME.CANVAS_WIDTH - 8 - digits.length * GAME.TILE_SIZE;
     for (let i = 0; i < digits.length; i++) {

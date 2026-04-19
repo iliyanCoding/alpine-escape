@@ -35,7 +35,6 @@ class Turrets {
       }
       if (snowCols.length === 0) continue;
 
-      // dont stack them too close
       const spacing = Math.max(MIN_SPACING - cameraY / 80, 400);
       const tooClose = this.turrets.some(
         t => Math.abs(t.worldY - row.worldY) < spacing
@@ -52,12 +51,10 @@ class Turrets {
   }
 
   update(cameraY, playerX, playerY) {
-    // clean up off-screen turrets
     while (this.turrets.length > 0 && this.turrets[0].worldY < cameraY - GAME.TILE_SIZE * 3) {
       this.turrets.shift();
     }
 
-    // shoot at player if close enough
     for (const turret of this.turrets) {
       if (turret.cooldown > 0) {
         turret.cooldown--;
@@ -72,7 +69,6 @@ class Turrets {
       const screenDist = Math.sqrt(screenDx * screenDx + screenDy * screenDy);
 
       if (screenDist < FIRE_RANGE) {
-        // aim slightly ahead of the player
         const playerWorldY = playerY + cameraY;
         const leadOffset = GAME.SCROLL_SPEED * 35;
         const dx = playerX - turretCenterX;
@@ -93,7 +89,6 @@ class Turrets {
       }
     }
 
-    // move snowballs, remove if off screen
     for (let i = this.snowballs.length - 1; i >= 0; i--) {
       this.snowballs[i].x += this.snowballs[i].dx;
       this.snowballs[i].worldY += this.snowballs[i].dy;
@@ -113,7 +108,6 @@ class Turrets {
       const screenY = turret.worldY - cameraY;
       const cartCol = Math.floor(turret.x / GAME.TILE_SIZE);
 
-      // wire goes across the whole row except where the cart is
       const wireSrcX = (WIRE_TILE % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
       const wireSrcY = Math.floor(WIRE_TILE / GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
       for (let col = 0; col < tilesPerRow; col++) {
@@ -125,7 +119,6 @@ class Turrets {
         );
       }
 
-      // the cart itself
       for (let r = 0; r < 3; r++) {
         for (let c = 0; c < 3; c++) {
           const tileIndex = CART_TILES[r][c];
@@ -140,7 +133,6 @@ class Turrets {
       }
     }
 
-    // draw snowballs
     const sbSrcX = (SNOWBALL_TILE % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
     const sbSrcY = Math.floor(SNOWBALL_TILE / GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
     for (const s of this.snowballs) {

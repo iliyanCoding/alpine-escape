@@ -12,7 +12,6 @@ class Terrain {
     this.shiftCounter = 0;
     this.nextWorldY = 0;
 
-    // curve edge tracking
     this.prevTrackLeft = -1;
     this.prevTrackRight = -1;
     this.curveCount = 0;
@@ -22,20 +21,16 @@ class Terrain {
   generateRow(worldY) {
     const row = [];
 
-    // randomly decide which way the track drifts
-
     if (this.shiftCounter <= 0) {
       const rand = Math.random();
       if (rand < 0.4) this.shiftDirection = -1;
       else if (rand > 0.6) this.shiftDirection = 1;
       else this.shiftDirection = 0;
-      this.shiftCounter = 5 + Math.floor(Math.random() * 4); // 5 to 8 rows
-
+      this.shiftCounter = 5 + Math.floor(Math.random() * 4);
     }
     if (Math.random() < 0.5) this.trackCenter += this.shiftDirection;
     this.shiftCounter--;
 
-    // dont let the track go off screen
     const halfTrack = Math.floor(this.trackWidth / 2);
     const margin = 4;
     if (this.trackCenter - halfTrack < margin) this.trackCenter = halfTrack + margin;
@@ -44,7 +39,6 @@ class Terrain {
     const trackLeft = this.trackCenter - halfTrack;
     const trackRight = this.trackCenter + halfTrack;
 
-    // use different edge tiles depending on if the track is curving
     let leftTile = 1;
     let rightTile = 4;
 
@@ -53,7 +47,6 @@ class Terrain {
       const prevRow = this.rows[this.rows.length - 1];
 
       if (shifted < 0) {
-        // curving left — start tiles go on the row before
         if (this.lastCurveDir !== -1) {
           this.curveCount = 1;
           if (prevRow) {
@@ -67,7 +60,6 @@ class Terrain {
         leftTile = 25; rightTile = 40;
 
       } else if (shifted > 0) {
-        // curving right
         if (this.lastCurveDir !== 1) {
           this.curveCount = 1;
           if (prevRow) {
@@ -81,7 +73,6 @@ class Terrain {
         leftTile = 37; rightTile = 28;
 
       } else {
-        // straight again — put end tiles on the last curved row
         if (this.lastCurveDir !== 0 && prevRow) {
           if (this.lastCurveDir === -1) {
             prevRow.tiles[prevRow.trackLeft] = 12;
@@ -121,6 +112,7 @@ class Terrain {
   }
 
   draw(ctx, cameraY) {
+    // Camera scrolling / world-to-screen coordinates: https://developer.mozilla.org/en-US/docs/Games/Techniques/Tilemaps/Square_tilemaps_implementation:_Scrolling_maps
     for (const row of this.rows) {
       const screenY = Math.round(row.worldY - cameraY);
 

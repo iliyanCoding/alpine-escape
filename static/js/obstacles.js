@@ -16,11 +16,9 @@ class Obstacles {
 
       this.lastSpawnY = row.worldY;
 
-      // skip most rows, but less as difficulty ramps up
       const chance = Math.min(SPAWN_CHANCE + cameraY / 50000, 0.45);
       if (Math.random() > chance) continue;
 
-      // only spawn on snow, not on the track
       const snowCols = [];
       for (let col = 0; col < row.tiles.length; col++) {
         if (col <= row.trackLeft || col > row.trackRight) snowCols.push(col);
@@ -41,7 +39,6 @@ class Obstacles {
   }
 
   update(cameraY) {
-    // clean up
     while (this.obstacles.length > 0 && this.obstacles[0].worldY < cameraY - GAME.TILE_SIZE) {
       this.obstacles.shift();
     }

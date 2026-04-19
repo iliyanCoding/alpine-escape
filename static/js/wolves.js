@@ -26,7 +26,6 @@ class Wolves {
       const chance = Math.min(SPAWN_CHANCE + cameraY / 60000, 0.15);
       if (Math.random() > chance) continue;
 
-      // place snowman on or near the track
       const trackCols = [];
       for (let col = row.trackLeft + 1; col <= row.trackRight; col++) {
         trackCols.push(col);
@@ -51,12 +50,10 @@ class Wolves {
   }
 
   update(cameraY, playerX, playerY) {
-    // clean up off-screen snowmen
     this.snowmen = this.snowmen.filter(
       s => s.worldY >= cameraY - GAME.TILE_SIZE * 2
     );
 
-    // trigger snowmen when player gets close
     for (const snowman of this.snowmen) {
       if (snowman.triggered) continue;
 
@@ -70,7 +67,6 @@ class Wolves {
       if (dist < TRIGGER_RANGE) {
         snowman.triggered = true;
 
-        // spawn wolf, it waits a bit before jumping
         this.wolves.push({
           x: snowman.x,
           worldY: snowman.worldY,
@@ -85,7 +81,6 @@ class Wolves {
       }
     }
 
-    // update wolves
     for (let i = this.wolves.length - 1; i >= 0; i--) {
       const wolf = this.wolves[i];
       wolf.frame++;
@@ -93,7 +88,6 @@ class Wolves {
       if (!wolf.leaping) {
         wolf.windup--;
         if (wolf.windup <= 0) {
-          // done waiting, jump at the player now
           wolf.leaping = true;
           const cx = wolf.x + GAME.TILE_SIZE / 2;
           const playerWorldY = playerY + cameraY;
@@ -115,7 +109,6 @@ class Wolves {
         wolf.traveled += WOLF_SPEED;
       }
 
-      // remove wolves that scrolled off screen
       const screenY = wolf.worldY - cameraY;
       if (screenY < -GAME.TILE_SIZE * 2) {
         this.wolves.splice(i, 1);
@@ -124,7 +117,6 @@ class Wolves {
   }
 
   draw(ctx, cameraY) {
-    // snowmen (hide the ones that already popped)
     for (const snowman of this.snowmen) {
       if (snowman.triggered) continue;
       const screenY = snowman.worldY - cameraY;
@@ -137,14 +129,12 @@ class Wolves {
       );
     }
 
-    // draw wolves
     for (const wolf of this.wolves) {
       let tile;
       const isLeaping = wolf.leaping && wolf.traveled < LEAP_DISTANCE;
       if (isLeaping) {
         tile = WOLF_LEAP_TILE;
       } else {
-        // walking in place or standing after missing
         tile = WOLF_WALK_TILES[Math.floor(wolf.frame / 8) % 2];
       }
       const srcX = (tile % GAME.TILES_PER_ROW) * GAME.TILE_SIZE;
